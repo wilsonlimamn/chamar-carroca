@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chocarroça - Cadastro de Carroceiro</title>
+    <!-- Importando a biblioteca oficial do Supabase via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 { font-size: 22px; color: #2c3e50; margin-bottom: 10px; }
+        p { font-size: 14px; color: #666; margin-bottom: 20px; }
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px; }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .btn {
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background-color: #1b5e20; }
+        .link-voltar {
+            display: block;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #2980b9;
+            text-decoration: none;
+        }
+        .link-voltar:hover { text-decoration: underline; }
+        .status { font-size: 13px; color: #555; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Novo Carroceiro 🛒</h1>
+        <p>Cadastre-se para entrar na fila de atendimento da ilha.</p>
+
+        <div class="input-group">
+            <label for="nome">Seu Nome Completo</label>
+            <input type="text" id="nome" placeholder="Ex: Wilson Lima">
+        </div>
+
+        <div class="input-group">
+            <label for="telefone">WhatsApp (com DDD e DDI 55)</label>
+            <input type="text" id="telefone" placeholder="Ex: 5591982361394">
+        </div>
+
+        <button class="btn" onclick="cadastrarCarroceiro()">Salvar Cadastro</button>
+        <div class="status" id="status-msg"></div>
+
+        <a href="index.html" class="link-voltar">← Voltar para a tela de chamada</a>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function cadastrarCarroceiro() {
+            const nome = document.getElementById('nome').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
+            const statusMsg = document.getElementById('status-msg');
+
+            if (!nome || !telefone) {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            statusMsg.style.color = '#555';
+            statusMsg.innerText = 'Cadastrando...';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('carroceiros')
+                    .insert([
+                        { nome: nome, telefone: telefone, status: 'disponivel' }
+                    ]);
+
+                if (error) throw error;
+
+                statusMsg.style.color = '#27ae60';
+                statusMsg.innerText = 'Cadastro realizado com sucesso!';
+                
+                // Limpar campos
+                document.getElementById('nome').value = '';
+                document.getElementById('telefone').value = '';
+
+            } catch (err) {
+                console.error("Erro ao cadastrar:", err);
+                statusMsg.style.color = '#c0392b';
+                statusMsg.innerText = 'Erro ao cadastrar. Verifique os dados.';
+            }
+        }
+    </script>
+</body>
+</html>
