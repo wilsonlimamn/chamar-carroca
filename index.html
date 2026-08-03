@@ -25,6 +25,7 @@
             width: 100%;
             max-width: 400px;
             text-align: center;
+            box-sizing: border-box;
         }
         h1 { font-size: 22px; color: #2c3e50; margin-bottom: 10px; }
         p { font-size: 14px; color: #666; margin-bottom: 20px; }
@@ -55,7 +56,22 @@
             transition: background 0.3s;
         }
         .btn:hover { background-color: #1ebe5d; }
+        .btn:disabled { background-color: #9e9e9e; cursor: not-allowed; }
+        .btn-secundario {
+            background-color: #eee;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-secundario:hover { background-color: #ddd; }
         .status { font-size: 13px; color: #27ae60; margin-top: 15px; font-weight: bold; }
+        .status.erro { color: #c0392b; }
+        .oculto { display: none; }
     </style>
 </head>
 <body>
@@ -73,16 +89,57 @@
             <input type="text" id="malas" placeholder="Ex: 2 pessoas e 3 malas">
         </div>
 
-        <button class="btn" id="btn-chamar" onclick="chamarProximo()">Chamar Wilson via WhatsApp</button>
-        <div class="status" id="status-msg">Próximo da fila: Wilson</div>
+        <button class="btn" id="btn-chamar" onclick="chamarProximo()" disabled>Carregando fila...</button>
+        <div class="status" id="status-msg">Buscando próximo da fila...</div>
+
+        <button class="btn-secundario oculto" id="btn-ocupado" onclick="marcarOcupado()">Marcar carroceiro como ocupado</button>
     </div>
 
     <script>
-        // Dados fixos do carroceiro da vez cadastrados no banco
-        const carroceiroDaVez = {
-            nome: "Wilson",
-            telefone: "5591982361394"
-        };
+        const SUPABASE_URL = 'https://zwfwomxxdksfhoradcyx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
+
+        let carroceiroDaVez = null; // { id, nome, telefone }
+
+        async function buscarProximoDaFila() {
+            const btn = document.getElementById('btn-chamar');
+            const statusMsg = document.getElementById('status-msg');
+
+            try {
+                // Pega o carroceiro "disponivel" mais antigo (ordem de chegada)
+                const url = `${SUPABASE_URL}/rest/v1/carroceiros?status=eq.disponivel&order=criado_em.asc&limit=1`;
+                const response = await fetch(url, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP ${response.status}`);
+                }
+
+                const dados = await response.json();
+
+                if (!dados.length) {
+                    statusMsg.classList.add('erro');
+                    statusMsg.innerText = 'Nenhum carroceiro disponível no momento.';
+                    btn.innerText = 'Sem carroceiros disponíveis';
+                    return;
+                }
+
+                carroceiroDaVez = dados[0];
+                statusMsg.classList.remove('erro');
+                statusMsg.innerText = `Próximo da fila: ${carroceiroDaVez.nome}`;
+                btn.innerText = `Chamar ${carroceiroDaVez.nome} via WhatsApp`;
+                btn.disabled = false;
+
+            } catch (err) {
+                console.error('Erro ao buscar fila:', err);
+                statusMsg.classList.add('erro');
+                statusMsg.innerText = 'Erro ao consultar a fila. Tente recarregar a página.';
+            }
+        }
 
         function chamarProximo() {
             const destino = document.getElementById('destino').value;
@@ -92,11 +149,47 @@
                 alert("Por favor, informe o seu destino.");
                 return;
             }
+            if (!carroceiroDaVez) return;
 
             const mensagem = `Olá, ${carroceiroDaVez.nome}! Estou no ponto/trapiche e preciso de uma carroça.%0A*Destino:* ${destino}%0A*Detalhes:* ${malas || 'Não informado'}`;
             const urlWhatsApp = `https://wa.me/${carroceiroDaVez.telefone}?text=${mensagem}`;
             window.open(urlWhatsApp, '_blank');
+
+            // Deixa à disposição do usuário marcar como ocupado, sem forçar automaticamente
+            document.getElementById('btn-ocupado').classList.remove('oculto');
         }
+
+        async function marcarOcupado() {
+            if (!carroceiroDaVez) return;
+            const btnOcupado = document.getElementById('btn-ocupado');
+            btnOcupado.disabled = true;
+            btnOcupado.innerText = 'Atualizando...';
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/carroceiros?id=eq.${carroceiroDaVez.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({ status: 'ocupado' })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP ${response.status}`);
+                }
+
+                btnOcupado.innerText = 'Marcado como ocupado ✓';
+            } catch (err) {
+                console.error('Erro ao marcar como ocupado:', err);
+                btnOcupado.disabled = false;
+                btnOcupado.innerText = 'Erro — tentar novamente';
+            }
+        }
+
+        buscarProximoDaFila();
     </script>
 </body>
 </html>
