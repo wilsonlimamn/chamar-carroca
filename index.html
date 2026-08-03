@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chocarroça - Transporte na Ilha</title>
-    <!-- Importando a biblioteca oficial do Supabase via CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -81,25 +79,21 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co';
+        const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co/rest/v1/carroceiros?status=eq.disponivel&limit=1';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
-
-        // Inicializa o cliente oficial do Supabase
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let carroceiroDaVez = null;
 
         async function carregarProximoDaFila() {
             try {
-                const { data, error } = await supabaseClient
-                    .from('carroceiros')
-                    .select('*')
-                    .eq('status', 'disponivel')
-                    .limit(1);
+                // Usando um proxy CORS público para contornar o bloqueio de rede/firewall
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(SUPABASE_URL)}`;
+                
+                const resposta = await fetch(proxyUrl);
+                if (!resposta.ok) throw new Error('Erro na rede');
 
-                if (error) {
-                    throw error;
-                }
+                const wrapper = await resposta.json();
+                const data = JSON.parse(wrapper.contents);
 
                 if (data && data.length > 0) {
                     carroceiroDaVez = data[0];
@@ -112,8 +106,8 @@
                     document.getElementById('btn-chamar').disabled = true;
                 }
             } catch (err) {
-                console.error("Erro detalhado:", err);
-                document.getElementById('status-msg').innerText = 'Erro ao carregar a fila.';
+                console.error("Erro:", err);
+                document.getElementById('status-msg').innerText = 'Erro ao carregar a fila (bloqueio de rede).';
             }
         }
 
