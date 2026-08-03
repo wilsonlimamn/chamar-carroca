@@ -106,10 +106,10 @@ HTML
         </div>
 
         <div class="input-group">
-            <label for="telefone">Seu WhatsApp (começando com 9)</label>
+            <label for="telefone">Seu WhatsApp (apenas os 8 dígitos finais)</label>
             <div class="phone-wrapper">
-                <span class="phone-prefix">+55 91</span>
-                <input type="text" id="telefone" maxlength="9" placeholder="Ex: 988012928">
+                <span class="phone-prefix">+55 91 9</span>
+                <input type="text" id="telefone" maxlength="8" placeholder="Ex: 8012928">
             </div>
         </div>
 
@@ -135,13 +135,13 @@ HTML
                 return;
             }
 
-            if (numeroLocal.length !== 9) {
-                alert("O número do WhatsApp deve conter exatamente 9 dígitos (começando com 9).");
+            if (numeroLocal.length !== 8) {
+                alert("O número deve conter exatamente 8 dígitos.");
                 return;
             }
 
-            // Junta o prefixo +5591 com os 9 dígitos informados
-            const telefoneCompleto = `5591${numeroLocal}`;
+            // Junta automaticamente o +55 91, o 9 obrigatório e os 8 dígitos informados
+            const telefoneCompleto = `55919${numeroLocal}`;
 
             statusMsg.style.color = '#555';
             statusMsg.innerText = 'Cadastrando...';
