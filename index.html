@@ -87,7 +87,12 @@
         const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_G48nu12xVGaLvVtA0m5H0Q_f-RXEAZg';
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Inicialização compatível com chave pública nova
+        const SUPABASE_OPTIONS = {
+        auth: { persistSession: false, autoRefreshToken: false }
+        };
+
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_OPTIONS);
 
         let carroceiroDaVez = null;
 
