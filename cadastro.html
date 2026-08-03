@@ -106,14 +106,13 @@
             statusMsg.innerText = 'Cadastrando...';
 
             try {
-                // Requisição HTTP direta para a REST API do Supabase
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/carroceiros`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'apikey': SUPABASE_ANON_KEY,
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                        'Prefer': 'return=minimal'
+                        'Prefer': 'return=representation'
                     },
                     body: JSON.stringify({
                         nome: nome,
@@ -123,14 +122,13 @@
                 });
 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || 'Erro ao inserir no banco');
+                    const errData = await response.json();
+                    throw new Error(errData.message || 'Erro ao salvar no banco');
                 }
 
                 statusMsg.style.color = '#27ae60';
                 statusMsg.innerText = 'Cadastro realizado com sucesso!';
                 
-                // Limpar campos
                 document.getElementById('nome').value = '';
                 document.getElementById('telefone').value = '';
 
