@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chocarroça - Cadastro de Carroceiro</title>
-    <!-- Biblioteca oficial do Supabase via CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -94,8 +92,6 @@
         const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
 
-        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         async function cadastrarCarroceiro() {
             const nome = document.getElementById('nome').value.trim();
             const telefone = document.getElementById('telefone').value.trim();
@@ -110,15 +106,25 @@
             statusMsg.innerText = 'Cadastrando...';
 
             try {
-                const { error } = await _supabase
-                    .from('carroceiros')
-                    .insert([
-                        { nome: nome, telefone: telefone, status: 'disponivel' }
-                    ]);
+                // Usando fetch nativo direcionado ao endpoint REST puro
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/carroceiros`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
+                        nome: nome,
+                        telefone: telefone,
+                        status: 'disponivel'
+                    })
+                });
 
-                if (error) {
-                    console.error("Erro do Supabase:", error);
-                    throw error;
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Erro na resposta do servidor');
                 }
 
                 statusMsg.style.color = '#27ae60';
@@ -128,9 +134,9 @@
                 document.getElementById('telefone').value = '';
 
             } catch (err) {
-                console.error("Erro detalhado:", err);
+                console.error("Erro capturado:", err);
                 statusMsg.style.color = '#c0392b';
-                statusMsg.innerText = 'Erro ao salvar. Verifique os dados.';
+                statusMsg.innerText = 'Erro ao salvar. Verifique o console.';
             }
         }
     </script>
