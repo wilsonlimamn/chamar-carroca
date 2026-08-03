@@ -45,31 +45,6 @@ HTML
             box-sizing: border-box;
             font-size: 14px;
         }
-        .phone-wrapper {
-            display: flex;
-            align-items: center;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            background-color: #f9f9f9;
-            overflow: hidden;
-        }
-        .phone-prefix {
-            padding: 10px;
-            background-color: #e9ecef;
-            color: #333;
-            font-size: 14px;
-            font-weight: bold;
-            border-right: 1px solid #ccc;
-            white-space: nowrap;
-        }
-        .phone-wrapper input {
-            border: none;
-            background: transparent;
-            border-radius: 0;
-        }
-        .phone-wrapper input:focus {
-            outline: none;
-        }
         .btn {
             background-color: #2e7d32;
             color: white;
@@ -102,15 +77,12 @@ HTML
 
         <div class="input-group">
             <label for="nome">Seu Nome Completo</label>
-            <input type="text" id="nome" placeholder="Digite seu nome">
+            <input type="text" id="nome" placeholder="Ex: Wilson Lima">
         </div>
 
         <div class="input-group">
-            <label for="telefone">Seu WhatsApp (apenas os 8 dígitos finais)</label>
-            <div class="phone-wrapper">
-                <span class="phone-prefix">+55 91 9</span>
-                <input type="text" id="telefone" maxlength="8" placeholder="Ex: 8012928">
-            </div>
+            <label for="telefone">WhatsApp (Ex: 5591982361394)</label>
+            <input type="text" id="telefone" placeholder="5591982361394">
         </div>
 
         <button class="btn" onclick="cadastrarCarroceiro()">Salvar Cadastro</button>
@@ -127,21 +99,13 @@ HTML
 
         async function cadastrarCarroceiro() {
             const nome = document.getElementById('nome').value.trim();
-            const numeroLocal = document.getElementById('telefone').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
             const statusMsg = document.getElementById('status-msg');
 
-            if (!nome || !numeroLocal) {
+            if (!nome || !telefone) {
                 alert("Por favor, preencha todos os campos.");
                 return;
             }
-
-            if (numeroLocal.length !== 8) {
-                alert("O número deve conter exatamente 8 dígitos.");
-                return;
-            }
-
-            // Junta automaticamente o +55 91, o 9 obrigatório e os 8 dígitos informados
-            const telefoneCompleto = `55919${numeroLocal}`;
 
             statusMsg.style.color = '#555';
             statusMsg.innerText = 'Cadastrando...';
@@ -150,7 +114,7 @@ HTML
                 const { error } = await supabaseClient
                     .from('carroceiros')
                     .insert([
-                        { nome: nome, telefone: telefoneCompleto, status: 'disponivel' }
+                        { nome: nome, telefone: telefone, status: 'disponivel' }
                     ]);
 
                 if (error) throw error;
