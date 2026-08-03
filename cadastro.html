@@ -56,6 +56,7 @@
             transition: background 0.3s;
         }
         .btn:hover { background-color: #1b5e20; }
+        .btn:disabled { background-color: #9e9e9e; cursor: not-allowed; }
         .link-voltar {
             display: block;
             margin-top: 15px;
@@ -82,26 +83,29 @@
             <input type="text" id="telefone" placeholder="5591982361394">
         </div>
 
-        <button class="btn" onclick="cadastrarCarroceiro()">Salvar Cadastro</button>
+        <button class="btn" id="btn-cadastrar" onclick="cadastrarCarroceiro()">Salvar Cadastro</button>
         <div class="status" id="status-msg"></div>
 
         <a href="index.html" class="link-voltar">← Voltar para a tela de chamada</a>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co';
+        // URL corrigida: precisa bater com o "ref" codificado dentro da anon key
+        const SUPABASE_URL = 'https://zwfwomxxdksfhoradcyx.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
 
         async function cadastrarCarroceiro() {
             const nome = document.getElementById('nome').value.trim();
             const telefone = document.getElementById('telefone').value.trim();
             const statusMsg = document.getElementById('status-msg');
+            const btn = document.getElementById('btn-cadastrar');
 
             if (!nome || !telefone) {
                 alert("Por favor, preencha todos os campos.");
                 return;
             }
 
+            btn.disabled = true;
             statusMsg.style.color = '#555';
             statusMsg.innerText = 'Cadastrando...';
 
@@ -122,19 +126,21 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error('Falha ao inserir no banco');
+                    const erro = await response.text();
+                    throw new Error(erro || `Erro HTTP ${response.status}`);
                 }
 
                 statusMsg.style.color = '#27ae60';
                 statusMsg.innerText = 'Cadastro realizado com sucesso!';
-                
                 document.getElementById('nome').value = '';
                 document.getElementById('telefone').value = '';
 
             } catch (err) {
-                console.error("Erro detalhado:", err);
+                console.error('Erro ao cadastrar carroceiro:', err);
                 statusMsg.style.color = '#c0392b';
-                statusMsg.innerText = 'Erro ao salvar. Verifique os dados.';
+                statusMsg.innerText = 'Erro ao cadastrar. Verifique sua conexão e tente novamente.';
+            } finally {
+                btn.disabled = false;
             }
         }
     </script>
