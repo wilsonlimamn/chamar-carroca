@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chocarroça - Transporte na Ilha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 { font-size: 22px; color: #2c3e50; margin-bottom: 10px; }
+        p { font-size: 14px; color: #666; margin-bottom: 20px; }
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px; }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .btn {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background-color: #1ebe5d; }
+        .status { font-size: 12px; color: #888; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Chamar Carroça 🛒</h1>
+        <p>Informe seus dados para chamar o próximo carroceiro disponível na fila.</p>
+
+        <div class="input-group">
+            <label for="destino">Para onde você vai? (Hotel / Pousada / Praia)</label>
+            <input type="text" id="destino" placeholder="Ex: Pousada do Sol">
+        </div>
+
+        <div class="input-group">
+            <label for="malas">Quantidade de Malas / Pessoas</label>
+            <input type="text" id="malas" placeholder="Ex: 2 pessoas e 3 malas">
+        </div>
+
+        <button class="btn" onclick="chamarProximo()">Chamar Carroceiro via WhatsApp</button>
+
+        <div class="status" id="status-msg">Carregando fila de carroceiros...</div>
+    </div>
+
+    <script>
+        // Simulando a lógica temporária (depois ligaremos ao banco de dados gratuito)
+        // Aqui seria puxado do banco o primeiro carroceiro da fila rotativa que mandou o "oi"
+        let carroceiroDaVez = {
+            nome: "Seu João",
+            telefone: "5591999999999" // Número simulado com DDI e DDD
+        };
+
+        document.getElementById('status-msg').innerText = `Próximo da fila: ${carroceiroDaVez.nome}`;
+
+        function chamarProximo() {
+            const destino = document.getElementById('destino').value;
+            const malas = document.getElementById('malas').value;
+
+            if (!destino) {
+                alert("Por favor, informe o seu destino.");
+                return;
+            }
+
+            // Monta a mensagem pronta para o WhatsApp
+            const mensagem = `Olá, ${carroceiroDaVez.nome}! Estou no ponto/trapiche e preciso de uma carroça.%0A*Destino:* ${destino}%0A*Detalhes:* ${malas || 'Não informado'}`;
+            
+            // Abre o link do WhatsApp direto para o número do carroceiro da vez
+            const urlWhatsApp = `https://wa.me/${carroceiroDaVez.telefone}?text=${mensagem}`;
+            window.open(urlWhatsApp, '_blank');
+        }
+    </script>
+
+</body>
+</html>
