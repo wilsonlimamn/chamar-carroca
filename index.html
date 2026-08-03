@@ -62,7 +62,6 @@
     </style>
 </head>
 <body>
-
     <div class="card">
         <h1>Chamar Carroça 🛒</h1>
         <p>Informe seus dados para chamar o próximo carroceiro disponível na fila.</p>
@@ -73,25 +72,22 @@
         </div>
 
         <div class="input-group">
-            <label for="malas">Quantidade de Malas / Pessoas</label>
+            <label for="malas">Quantidade de Malas / Personas</label>
             <input type="text" id="malas" placeholder="Ex: 2 pessoas e 3 malas">
         </div>
 
         <button class="btn" id="btn-chamar" onclick="chamarProximo()" disabled>Buscando carroceiro...</button>
-
         <div class="status" id="status-msg">Conectando ao sistema da ilha...</div>
     </div>
 
     <script>
-        // ⚠️ SUBSTITUA COM OS DADOS DO SEU PROJETO NO SUPABASE (Configurações > API)
-const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
+        const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let carroceiroDaVez = null;
 
-          async function carregarProximoDaFila() {
+        async function carregarProximoDaFila() {
             try {
                 const { data, error } = await supabaseClient
                     .from('carroceiros')
@@ -120,6 +116,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 document.getElementById('status-msg').innerText = 'Erro de conexão.';
             }
         }
+
         function chamarProximo() {
             if (!carroceiroDaVez) return;
 
@@ -131,17 +128,12 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 return;
             }
 
-            // Monta a mensagem pronta para o WhatsApp
             const mensagem = `Olá, ${carroceiroDaVez.nome}! Estou no ponto/trapiche e preciso de uma carroça.%0A*Destino:* ${destino}%0A*Detalhes:* ${malas || 'Não informado'}`;
-            
-            // Abre o link do WhatsApp direto para o número do carroceiro da vez
             const urlWhatsApp = `https://wa.me/${carroceiroDaVez.telefone}?text=${mensagem}`;
             window.open(urlWhatsApp, '_blank');
         }
 
-        // Executa ao abrir a página
         carregarProximoDaFila();
     </script>
-
 </body>
 </html>
