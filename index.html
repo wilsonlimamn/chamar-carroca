@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>chamaarroça - Transporte na Ilha</title>
+    <title>Chocarroça - Transporte na Ilha</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -116,7 +116,7 @@
             const statusMsg = document.getElementById('status-msg');
 
             try {
-                const url = `${SUPABASE_URL}/rest/v1/carroceiros?select=*&order=criado_em.desc`;
+                const url = `${SUPABASE_URL}/rest/v1/carroceiros?select=*`;
                 const response = await fetch(url, {
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
@@ -130,6 +130,9 @@
                 }
 
                 carroceiros = await response.json();
+
+                statusMsg.innerText = 'DEBUG - colunas recebidas: ' + JSON.stringify(carroceiros[0]);
+                console.log('Registros recebidos:', carroceiros);
 
                 if (!carroceiros.length) {
                     statusMsg.innerText = 'Nenhum carroceiro cadastrado ainda.';
