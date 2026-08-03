@@ -91,16 +91,19 @@
 
         let carroceiroDaVez = null;
 
-        async function carregarProximoDaFila() {
+          async function carregarProximoDaFila() {
             try {
-                // Busca no Supabase o primeiro carroceiro com status 'disponivel'
                 const { data, error } = await supabaseClient
                     .from('carroceiros')
                     .select('*')
                     .eq('status', 'disponivel')
                     .limit(1);
 
-                if (error) throw error;
+                if (error) {
+                    console.error("Erro detalhado:", error);
+                    document.getElementById('status-msg').innerText = 'Erro: ' + error.message;
+                    return;
+                }
 
                 if (data && data.length > 0) {
                     carroceiroDaVez = data[0];
@@ -113,11 +116,10 @@
                     document.getElementById('btn-chamar').disabled = true;
                 }
             } catch (err) {
-                console.log(err);
-                document.getElementById('status-msg').innerText = 'Erro ao carregar a fila.';
+                console.error("Erro geral:", err);
+                document.getElementById('status-msg').innerText = 'Erro de conexão.';
             }
         }
-
         function chamarProximo() {
             if (!carroceiroDaVez) return;
 
