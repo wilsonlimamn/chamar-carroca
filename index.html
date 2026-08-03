@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chocarroça - Transporte na Ilha</title>
+    <!-- Biblioteca do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,7 +57,8 @@
             transition: background 0.3s;
         }
         .btn:hover { background-color: #1ebe5d; }
-        .status { font-size: 12px; color: #888; margin-top: 15px; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
+        .status { font-size: 13px; color: #555; margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -74,22 +77,50 @@
             <input type="text" id="malas" placeholder="Ex: 2 pessoas e 3 malas">
         </div>
 
-        <button class="btn" onclick="chamarProximo()">Chamar Carroceiro via WhatsApp</button>
+        <button class="btn" id="btn-chamar" onclick="chamarProximo()" disabled>Buscando carroceiro...</button>
 
-        <div class="status" id="status-msg">Carregando fila de carroceiros...</div>
+        <div class="status" id="status-msg">Conectando ao sistema da ilha...</div>
     </div>
 
     <script>
-        // Simulando a lógica temporária (depois ligaremos ao banco de dados gratuito)
-        // Aqui seria puxado do banco o primeiro carroceiro da fila rotativa que mandou o "oi"
-        let carroceiroDaVez = {
-            nome: "Seu João",
-            telefone: "5591999999999" // Número simulado com DDI e DDD
-        };
+        // ⚠️ SUBSTITUA COM OS DADOS DO SEU PROJETO NO SUPABASE (Configurações > API)
+        const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_G48nu12xVGaLvVtA0m5H0Q_f-RXEAZg';
 
-        document.getElementById('status-msg').innerText = `Próximo da fila: ${carroceiroDaVez.nome}`;
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let carroceiroDaVez = null;
+
+        async function carregarProximoDaFila() {
+            try {
+                // Busca no Supabase o primeiro carroceiro com status 'disponivel'
+                const { data, error } = await supabaseClient
+                    .from('carroceiros')
+                    .select('*')
+                    .eq('status', 'disponivel')
+                    .limit(1);
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    carroceiroDaVez = data[0];
+                    document.getElementById('status-msg').innerText = `Próximo da fila: ${carroceiroDaVez.nome}`;
+                    document.getElementById('btn-chamar').innerText = `Chamar ${carroceiroDaVez.nome} via WhatsApp`;
+                    document.getElementById('btn-chamar').disabled = false;
+                } else {
+                    document.getElementById('status-msg').innerText = 'Nenhum carroceiro disponível no momento.';
+                    document.getElementById('btn-chamar').innerText = 'Indisponível';
+                    document.getElementById('btn-chamar').disabled = true;
+                }
+            } catch (err) {
+                console.log(err);
+                document.getElementById('status-msg').innerText = 'Erro ao carregar a fila.';
+            }
+        }
 
         function chamarProximo() {
+            if (!carroceiroDaVez) return;
+
             const destino = document.getElementById('destino').value;
             const malas = document.getElementById('malas').value;
 
@@ -105,6 +136,9 @@
             const urlWhatsApp = `https://wa.me/${carroceiroDaVez.telefone}?text=${mensagem}`;
             window.open(urlWhatsApp, '_blank');
         }
+
+        // Executa ao abrir a página
+        carregarProximoDaFila();
     </script>
 
 </body>
