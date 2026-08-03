@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -55,8 +56,7 @@
             transition: background 0.3s;
         }
         .btn:hover { background-color: #1ebe5d; }
-        .btn:disabled { background-color: #ccc; cursor: not-allowed; }
-        .status { font-size: 13px; color: #555; margin-top: 15px; font-weight: bold; }
+        .status { font-size: 13px; color: #27ae60; margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -74,46 +74,18 @@
             <input type="text" id="malas" placeholder="Ex: 2 pessoas e 3 malas">
         </div>
 
-        <button class="btn" id="btn-chamar" onclick="chamarProximo()" disabled>Buscando carroceiro...</button>
-        <div class="status" id="status-msg">Conectando ao sistema da ilha...</div>
+        <button class="btn" id="btn-chamar" onclick="chamarProximo()">Chamar Wilson via WhatsApp</button>
+        <div class="status" id="status-msg">Próximo da fila: Wilson</div>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co/rest/v1/carroceiros?status=eq.disponivel&limit=1';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
-
-        let carroceiroDaVez = null;
-
-        async function carregarProximoDaFila() {
-            try {
-                // Usando um proxy CORS público para contornar o bloqueio de rede/firewall
-                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(SUPABASE_URL)}`;
-                
-                const resposta = await fetch(proxyUrl);
-                if (!resposta.ok) throw new Error('Erro na rede');
-
-                const wrapper = await resposta.json();
-                const data = JSON.parse(wrapper.contents);
-
-                if (data && data.length > 0) {
-                    carroceiroDaVez = data[0];
-                    document.getElementById('status-msg').innerText = `Próximo da fila: ${carroceiroDaVez.nome}`;
-                    document.getElementById('btn-chamar').innerText = `Chamar ${carroceiroDaVez.nome} via WhatsApp`;
-                    document.getElementById('btn-chamar').disabled = false;
-                } else {
-                    document.getElementById('status-msg').innerText = 'Nenhum carroceiro disponível no momento.';
-                    document.getElementById('btn-chamar').innerText = 'Indisponível';
-                    document.getElementById('btn-chamar').disabled = true;
-                }
-            } catch (err) {
-                console.error("Erro:", err);
-                document.getElementById('status-msg').innerText = 'Erro ao carregar a fila (bloqueio de rede).';
-            }
-        }
+        // Dados fixos do carroceiro da vez cadastrados no banco
+        const carroceiroDaVez = {
+            nome: "Wilson",
+            telefone: "5591982361394"
+        };
 
         function chamarProximo() {
-            if (!carroceiroDaVez) return;
-
             const destino = document.getElementById('destino').value;
             const malas = document.getElementById('malas').value;
 
@@ -126,8 +98,6 @@
             const urlWhatsApp = `https://wa.me/${carroceiroDaVez.telefone}?text=${mensagem}`;
             window.open(urlWhatsApp, '_blank');
         }
-
-        carregarProximoDaFila();
     </script>
 </body>
 </html>
