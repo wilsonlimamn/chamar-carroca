@@ -86,7 +86,6 @@
 
         async function carregarProximoDaFila() {
             try {
-                // Consulta direta via fetch nativo na API REST do Supabase
                 const resposta = await fetch(`${SUPABASE_URL}/rest/v1/carroceiros?status=eq.disponivel&limit=1`, {
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
