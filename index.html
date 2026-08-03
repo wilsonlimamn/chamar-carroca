@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chocarroça - Transporte na Ilha</title>
+    <title>chamaarroça - Transporte na Ilha</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -125,7 +125,8 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Erro HTTP ${response.status}`);
+                    const corpoErro = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${corpoErro}`);
                 }
 
                 carroceiros = await response.json();
@@ -155,7 +156,7 @@
             } catch (err) {
                 console.error('Erro ao carregar carroceiros:', err);
                 statusMsg.classList.add('erro');
-                statusMsg.innerText = 'Erro ao consultar a base. Tente recarregar a página.';
+                statusMsg.innerText = 'Erro: ' + (err.message || err);
             }
         }
 
