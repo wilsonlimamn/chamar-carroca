@@ -79,14 +79,13 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
 
         let carroceiroDaVez = null;
 
         async function carregarProximoDaFila() {
             try {
-                const resposta = await fetch(`${SUPABASE_URL}/rest/v1/carroceiros?status=eq.disponivel&limit=1`, {
+                const resposta = await fetch('https://zwfwmomxxdksfhoradcyx.supabase.co/rest/v1/carroceiros?status=eq.disponivel&limit=1', {
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
