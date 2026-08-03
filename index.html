@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chocarroça - Transporte na Ilha</title>
-    <!-- Biblioteca do Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -72,7 +70,7 @@
         </div>
 
         <div class="input-group">
-            <label for="malas">Quantidade de Malas / Personas</label>
+            <label for="malas">Quantidade de Malas / Pessoas</label>
             <input type="text" id="malas" placeholder="Ex: 2 pessoas e 3 malas">
         </div>
 
@@ -84,22 +82,23 @@
         const SUPABASE_URL = 'https://zwfwmomxxdksfhoradcyx.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let carroceiroDaVez = null;
 
         async function carregarProximoDaFila() {
             try {
-                const { data, error } = await supabaseClient
-                    .from('carroceiros')
-                    .select('*')
-                    .eq('status', 'disponivel')
-                    .limit(1);
+                // Consulta direta via fetch nativo na API REST do Supabase
+                const resposta = await fetch(`${SUPABASE_URL}/rest/v1/carroceiros?status=eq.disponivel&limit=1`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
 
-                if (error) {
-                    console.error("Erro detalhado:", error);
-                    document.getElementById('status-msg').innerText = 'Erro: ' + error.message;
-                    return;
+                if (!resposta.ok) {
+                    throw new Error('Erro na resposta do servidor');
                 }
+
+                const data = await resposta.json();
 
                 if (data && data.length > 0) {
                     carroceiroDaVez = data[0];
@@ -112,8 +111,8 @@
                     document.getElementById('btn-chamar').disabled = true;
                 }
             } catch (err) {
-                console.error("Erro geral:", err);
-                document.getElementById('status-msg').innerText = 'Erro de conexão.';
+                console.error("Erro:", err);
+                document.getElementById('status-msg').innerText = 'Erro ao carregar a fila.';
             }
         }
 
