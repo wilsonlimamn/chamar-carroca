@@ -55,7 +55,7 @@
         .phone-prefix {
             padding: 10px;
             background-color: #e9ecef;
-            color: #555;
+            color: #333;
             font-size: 14px;
             font-weight: bold;
             border-right: 1px solid #ccc;
@@ -105,10 +105,10 @@
         </div>
 
         <div class="input-group">
-            <label for="telefone">Seu WhatsApp</label>
+            <label for="telefone">Seu WhatsApp (apenas os 8 dígitos finais)</label>
             <div class="phone-wrapper">
                 <span class="phone-prefix">+55 91</span>
-                <input type="text" id="telefone" maxlength="8" placeholder="Ex: 98236139">
+                <input type="text" id="telefone" maxlength="8" placeholder="Ex: 82361394">
             </div>
         </div>
 
@@ -139,7 +139,7 @@
                 return;
             }
 
-            // Junta o prefixo fixo com os 8 dígitos informados pelo carroceiro
+            // Junta automaticamente o +5591 com os 8 dígitos informados
             const telefoneCompleto = `5591${numeroLocal}`;
 
             statusMsg.style.color = '#555';
