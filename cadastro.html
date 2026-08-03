@@ -106,10 +106,10 @@ HTML
         </div>
 
         <div class="input-group">
-            <label for="telefone">Seu WhatsApp (com o 9 e os 8 dígitos finais)</label>
+            <label for="telefone">Seu WhatsApp (começando com 9)</label>
             <div class="phone-wrapper">
                 <span class="phone-prefix">+55 91</span>
-                <input type="text" id="telefone" maxlength="9" placeholder="Ex: 982361394">
+                <input type="text" id="telefone" maxlength="9" placeholder="Ex: 988012928">
             </div>
         </div>
 
@@ -136,11 +136,11 @@ HTML
             }
 
             if (numeroLocal.length !== 9) {
-                alert("O número após o DDD deve conter exatamente 9 dígitos (começando com 9).");
+                alert("O número do WhatsApp deve conter exatamente 9 dígitos (começando com 9).");
                 return;
             }
 
-            // Junta o prefixo +5591 com o 9 e os demais dígitos informados
+            // Junta o prefixo +5591 com os 9 dígitos informados
             const telefoneCompleto = `5591${numeroLocal}`;
 
             statusMsg.style.color = '#555';
@@ -165,7 +165,7 @@ HTML
             } catch (err) {
                 console.error("Erro ao cadastrar:", err);
                 statusMsg.style.color = '#c0392b';
-                statusMsg.innerText = 'Erro ao cadastrar. Verifique a política INSERT no Supabase.';
+                statusMsg.innerText = 'Erro ao cadastrar. Verifique os dados.';
             }
         }
     </script>
