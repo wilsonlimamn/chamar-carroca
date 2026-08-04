@@ -3,18 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chocarroça - Transporte na Ilha</title>
+    <title>Chama-Carroça - Transporte na Ilha</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
             color: #333;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 90vh;
+            min-height: 100vh;
+            box-sizing: border-box;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 0.5s ease-in-out;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 0;
+        }
+        .card, .lista {
+            position: relative;
+            z-index: 1;
         }
         .card {
             background: white;
@@ -87,7 +102,8 @@
 </head>
 <body>
     <div class="card">
-        <h1>Chamar Carroça 🛒</h1>
+        <img src="carroca.svg" alt="Chama-Carroça" style="width:100%; max-width:220px; margin-bottom:10px;">
+        <h1>Chamar Carroça</h1>
         <p>Escolha um carroceiro da lista abaixo e informe seu destino.</p>
 
         <div class="input-group">
@@ -106,6 +122,11 @@
     </div>
 
     <script>
+        // Fundo aleatório a cada acesso
+        const fundos = ['praia1.jpg', 'praia2.jpg', 'praia3.jpg', 'praia4.jpg'];
+        const fundoEscolhido = fundos[Math.floor(Math.random() * fundos.length)];
+        document.body.style.backgroundImage = `url('${fundoEscolhido}')`;
+
         const SUPABASE_URL = 'https://zwfwomxxdksfhoradcyx.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
 
