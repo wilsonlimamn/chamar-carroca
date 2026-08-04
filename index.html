@@ -1,68 +1,14 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chama-Carroça - Transporte na Ilha</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            transition: background-image 0.5s ease-in-out;
-        }
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.35);
-            z-index: 0;
-        }
-        .card, .lista {
-            position: relative;
-            z-index: 1;
-        }
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            box-sizing: border-box;
-            margin-bottom: 20px;
-        }
-        h1 { font-size: 22px; color: #2c3e50; margin-bottom: 10px; }
-        p { font-size: 14px; color: #666; margin-bottom: 20px; }
-        .input-group {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px; }
-        input {
-            width: 100%;
+<!DOCTYPE html><html lang="pt-BR"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Chama-Carroça - Transporte na Ilha</title>    <style>        body {            font-family: Arial, sans-serif;            color: #333;            margin: 0;            padding: 20px;            display: flex;            flex-direction: column;            align-items: center;            min-height: 100vh;            box-sizing: border-box;            background-size: cover;            background-position: center;            background-attachment: fixed;            transition: background-image 0.5s ease-in-out;        }        body::before {            content: "";            position: fixed;            top: 0; left: 0; right: 0; bottom: 0;            background: rgba(0,0,0,0.35);            z-index: 0;        }        .card, .lista {            position: relative;            z-index: 1;        }        .card {            background: white;            padding: 25px;            border-radius: 12px;            box-shadow: 0 4px 10px rgba(0,0,0,0.1);            width: 100%;            max-width: 400px;            text-align: center;            box-sizing: border-box;            margin-bottom: 20px;        }        h1 { font-size: 22px; color: #2c3e50; margin-bottom: 10px; }        p { font-size: 14px; color: #666; margin-bottom: 20px; }        .input-group {            margin-bottom: 15px;            text-align: left;        }        label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px; }        input {            width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 6px;
             box-sizing: border-box;
             font-size: 14px;
         }
-        .lista {
-            width: 100%;
+        .lista {            width: 100%;
             max-width: 400px;
         }
-        .item {
-            background: white;
+        .item {            background: white;
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
@@ -70,8 +16,7 @@
             text-align: left;
         }
         .item-nome { font-size: 16px; font-weight: bold; color: #2c3e50; }
-        .item-status {
-            display: inline-block;
+        .item-status {            display: inline-block;
             font-size: 11px;
             font-weight: bold;
             padding: 2px 8px;
@@ -83,8 +28,7 @@
         .status-ocupado { background: #fdecea; color: #c0392b; }
         .status-outro { background: #eee; color: #666; }
         .item-telefone { font-size: 13px; color: #777; margin-top: 4px; }
-        .btn {
-            background-color: #25D366;
+        .btn {            background-color: #25D366;
             color: white;
             border: none;
             padding: 10px;
@@ -98,108 +42,27 @@
         .btn:hover { background-color: #1ebe5d; }
         .msg { font-size: 14px; color: #666; margin-top: 10px; }
         .msg.erro { color: #c0392b; }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <img src="carroca.svg" alt="Chama-Carroça" style="width:100%; max-width:220px; margin-bottom:10px;">
-        <h1>Chamar Carroça</h1>
-        <p>Escolha um carroceiro da lista abaixo e informe seu destino.</p>
-
-        <div class="input-group">
-            <label for="destino">Para onde você vai? (Hotel / Pousada / Praia)</label>
-            <input type="text" id="destino" placeholder="Ex: Pousada do Sol">
-        </div>
-
-        <div class="input-group">
-            <label for="malas">Quantidade de Malas / Pessoas</label>
-            <input type="text" id="malas" placeholder="Ex: 2 pessoas e 3 malas">
-        </div>
-    </div>
-
-    <div class="lista" id="lista-carroceiros">
-        <div class="msg" id="status-msg">Carregando carroceiros cadastrados...</div>
-    </div>
-
-    <script>
-        // Fundo aleatório a cada acesso
-        const fundos = ['praia1.jpg', 'praia2.jpg', 'praia3.jpg', 'praia4.jpg'];
-        const fundoEscolhido = fundos[Math.floor(Math.random() * fundos.length)];
-        document.body.style.backgroundImage = `url('${fundoEscolhido}')`;
-
-        const SUPABASE_URL = 'https://zwfwomxxdksfhoradcyx.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
-
+    </style></head><body>    <div class="card">
+        <!-- QR-Code inserido no topo -->
+        <img src="5LwE1o.jpg" alt="QR Code" style="width:100%; max-width:150px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; padding: 5px; background: #fff;">
+        
+        <img src="carroca.svg" alt="Chama-Carroça" style="width:100%; max-width:220px; margin-bottom:10px;">        <h1>Chamar Carroça</h1>        <p>Escolha um carroceiro da lista abaixo e informe seu destino.</p>
+        <div class="input-group">            <label for="destino">Para onde você vai? (Hotel / Pousada / Praia)</label>            <input type="text" id="destino" placeholder="Ex: Pousada do Sol">        </div>
+        <div class="input-group">            <label for="malas">Quantidade de Malas / Pessoas</label>            <input type="text" id="malas" placeholder="Ex: 2 pessoas e 3 malas">        </div>    </div>
+    <div class="lista" id="lista-carroceiros">        <div class="msg" id="status-msg">Carregando carroceiros cadastrados...</div>    </div>
+    <script>        // Fundo aleatório a cada acesso        const fundos = ['praia1.jpg', 'praia2.jpg', 'praia3.jpg', 'praia4.jpg'];        const fundoEscolhido = fundos[Math.floor(Math.random() * fundos.length)];        document.body.style.backgroundImage = `url('${fundoEscolhido}')`;
+        const SUPABASE_URL = 'https://zwfwomxxdksfhoradcyx.supabase.co';        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3ZndvbXh4ZGtzZmhvcmFkY3l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NjQyNDAsImV4cCI6MjEwMTM0MDI0MH0.-D2_4F3xQHJFcYtrqC1MB8KSoglmgLiJR6Dv7yZEXRA';
         let carroceiros = [];
-
-        async function carregarCarroceiros() {
-            const listaDiv = document.getElementById('lista-carroceiros');
-            const statusMsg = document.getElementById('status-msg');
-
-            try {
-                const url = `${SUPABASE_URL}/rest/v1/carroceiros?select=*`;
-                const response = await fetch(url, {
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                    }
-                });
-
-                if (!response.ok) {
-                    const corpoErro = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${corpoErro}`);
-                }
-
+        async function carregarCarroceiros() {            const listaDiv = document.getElementById('lista-carroceiros');            const statusMsg = document.getElementById('status-msg');
+            try {                const url = `${SUPABASE_URL}/rest/v1/carroceiros?select=*`;                const response = await fetch(url, {                    headers: {                        'apikey': SUPABASE_ANON_KEY,                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`                    }                });
+                if (!response.ok) {                    const corpoErro = await response.text();                    throw new Error(`HTTP ${response.status}: ${corpoErro}`);                }
                 carroceiros = await response.json();
-
-                statusMsg.innerText = 'DEBUG - colunas recebidas: ' + JSON.stringify(carroceiros[0]);
-                console.log('Registros recebidos:', carroceiros);
-
-                if (!carroceiros.length) {
-                    statusMsg.innerText = 'Nenhum carroceiro cadastrado ainda.';
-                    return;
-                }
-
-                listaDiv.innerHTML = '';
-                carroceiros.forEach((c, index) => {
-                    const statusClasse = c.status === 'disponivel' ? 'status-disponivel'
-                                        : c.status === 'ocupado' ? 'status-ocupado'
-                                        : 'status-outro';
-
-                    const item = document.createElement('div');
-                    item.className = 'item';
-                    item.innerHTML = `
-                        <span class="item-nome">${c.nome || '(sem nome)'}</span>
-                        <span class="item-status ${statusClasse}">${c.status || 'sem status'}</span>
-                        <div class="item-telefone">${c.telefone || 'sem telefone'}</div>
-                        <button class="btn" onclick="chamar(${index})">Chamar via WhatsApp</button>
-                    `;
-                    listaDiv.appendChild(item);
-                });
-
-            } catch (err) {
-                console.error('Erro ao carregar carroceiros:', err);
-                statusMsg.classList.add('erro');
-                statusMsg.innerText = 'Erro: ' + (err.message || err);
-            }
-        }
-
-        function chamar(index) {
-            const destino = document.getElementById('destino').value;
-            const malas = document.getElementById('malas').value;
-
-            if (!destino) {
-                alert("Por favor, informe o seu destino.");
-                return;
-            }
-
-            const c = carroceiros[index];
-            const mensagem = `Olá, ${c.nome}! Estou no ponto/trapiche e preciso de uma carroça.%0A*Destino:* ${destino}%0A*Detalhes:* ${malas || 'Não informado'}`;
-            const urlWhatsApp = `https://wa.me/${c.telefone}?text=${mensagem}`;
-            window.open(urlWhatsApp, '_blank');
-        }
-
-        carregarCarroceiros();
-    </script>
-</body>
-</html>
+                statusMsg.innerText = 'DEBUG - colunas recebidas: ' + JSON.stringify(carroceiros[0]);                console.log('Registros recebidos:', carroceiros);
+                if (!carroceiros.length) {                    statusMsg.innerText = 'Nenhum carroceiro cadastrado ainda.';                    return;                }
+                listaDiv.innerHTML = '';                carroceiros.forEach((c, index) => {                    const statusClasse = c.status === 'disponivel' ? 'status-disponivel'                                        : c.status === 'ocupado' ? 'status-ocupado'                                        : 'status-outro';
+                    const item = document.createElement('div');                    item.className = 'item';                    item.innerHTML = `                        <span class="item-nome">${c.nome || '(sem nome)'}</span>                        <span class="item-status ${statusClasse}">${c.status || 'sem status'}</span>                        <div class="item-telefone">${c.telefone || 'sem telefone'}</div>                        <button class="btn" onclick="chamar(${index})">Chamar via WhatsApp</button>                    `;                    listaDiv.appendChild(item);                });
+            } catch (err) {                console.error('Erro ao carregar carroceiros:', err);                statusMsg.classList.add('erro');                statusMsg.innerText = 'Erro: ' + (err.message || err);            }        }
+        function chamar(index) {            const destino = document.getElementById('destino').value;            const malas = document.getElementById('malas').value;
+            if (!destino) {                alert("Por favor, informe o seu destino.");                return;            }
+            const c = carroceiros[index];            const mensagem = `Olá, ${c.nome}! Estou no ponto/trapiche e preciso de uma carroça.%0A*Destino:* ${destino}%0A*Detalhes:* ${malas || 'Não informado'}`;            const urlWhatsApp = `https://wa.me/${c.telefone}?text=${mensagem}`;            window.open(urlWhatsApp, '_blank');        }
+        carregarCarroceiros();    </script></body></html>
