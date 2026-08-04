@@ -1,4 +1,23 @@
-<!DOCTYPE html><html lang="pt-BR"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Chama-Carroça - Transporte na Ilha</title>    <style>        body {            font-family: Arial, sans-serif;            color: #333;            margin: 0;            padding: 20px;            display: flex;            flex-direction: column;            align-items: center;            min-height: 100vh;            box-sizing: border-box;            background-size: cover;            background-position: center;            background-attachment: fixed;            transition: background-image 0.5s ease-in-out;        }        body::before {            content: "";            position: fixed;            top: 0; left: 0; right: 0; bottom: 0;            background: rgba(0,0,0,0.35);            z-index: 0;        }        .card, .lista {            position: relative;            z-index: 1;        }        .card {            background: white;            padding: 25px;            border-radius: 12px;            box-shadow: 0 4px 10px rgba(0,0,0,0.1);            width: 100%;            max-width: 400px;            text-align: center;            box-sizing: border-box;            margin-bottom: 20px;        }        h1 { font-size: 22px; color: #2c3e50; margin-bottom: 10px; }        p { font-size: 14px; color: #666; margin-bottom: 20px; }        .input-group {            margin-bottom: 15px;            text-align: left;        }        label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px; }        input {            width: 100%;
+Pela imagem, o QR-code carregou direitinho em cima! O que está aparecendo quebrado logo abaixo dele é a imagem do logo (carroca.svg) porque o arquivo SVG não está na raiz do repositório.
+
+Aqui está o seu código com esse logo quebrado totalmente removido, mantendo apenas o QR-code perfeito no topo:
+
+HTML
+<!DOCTYPE html><html lang="pt-BR"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Chama-Carroça - Transporte na Ilha</title>    <style>        body {            font-family: Arial, sans-serif;            color: #333;            margin: 0;            padding: 20px;            display: flex;            flex-direction: column;            align-items: center;            min-height: 100vh;            box-sizing: border-box;            background-size: cover;            background-position: center;            background-attachment: fixed;            transition: background-image 0.5s ease-in-out;        }        body::before {            content: "";            position: fixed;            top: 0; left: 0; right: 0; bottom: 0;            background: rgba(0,0,0,0.35);            z-index: 0;        }        .card, .lista {            position: relative;            z-index: 1;        }        .card {            background: white;            padding: 25px;            border-radius: 12px;            box-shadow: 0 4px 10px rgba(0,0,0,0.1);            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+        h1 { font-size: 22px; color: #2c3e50; margin-bottom: 10px; }
+        p { font-size: 14px; color: #666; margin-bottom: 20px; }
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px; }
+        input {
+            width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 6px;
@@ -43,10 +62,11 @@
         .msg { font-size: 14px; color: #666; margin-top: 10px; }
         .msg.erro { color: #c0392b; }
     </style></head><body>    <div class="card">
-        <!-- QR-Code inserido no topo -->
+        <!-- QR-Code centralizado -->
         <img src="5LwE1o.jpg" alt="QR Code" style="width:100%; max-width:150px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; padding: 5px; background: #fff;">
         
-        <img src="carroca.svg" alt="Chama-Carroça" style="width:100%; max-width:220px; margin-bottom:10px;">        <h1>Chamar Carroça</h1>        <p>Escolha um carroceiro da lista abaixo e informe seu destino.</p>
+        <h1>Chamar Carroça</h1>        
+        <p>Escolha um carroceiro da lista abaixo e informe seu destino.</p>
         <div class="input-group">            <label for="destino">Para onde você vai? (Hotel / Pousada / Praia)</label>            <input type="text" id="destino" placeholder="Ex: Pousada do Sol">        </div>
         <div class="input-group">            <label for="malas">Quantidade de Malas / Pessoas</label>            <input type="text" id="malas" placeholder="Ex: 2 pessoas e 3 malas">        </div>    </div>
     <div class="lista" id="lista-carroceiros">        <div class="msg" id="status-msg">Carregando carroceiros cadastrados...</div>    </div>
