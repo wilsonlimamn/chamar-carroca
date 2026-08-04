@@ -1,8 +1,3 @@
-Pela imagem, o QR-code carregou direitinho em cima! O que está aparecendo quebrado logo abaixo dele é a imagem do logo (carroca.svg) porque o arquivo SVG não está na raiz do repositório.
-
-Aqui está o seu código com esse logo quebrado totalmente removido, mantendo apenas o QR-code perfeito no topo:
-
-HTML
 <!DOCTYPE html><html lang="pt-BR"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Chama-Carroça - Transporte na Ilha</title>    <style>        body {            font-family: Arial, sans-serif;            color: #333;            margin: 0;            padding: 20px;            display: flex;            flex-direction: column;            align-items: center;            min-height: 100vh;            box-sizing: border-box;            background-size: cover;            background-position: center;            background-attachment: fixed;            transition: background-image 0.5s ease-in-out;        }        body::before {            content: "";            position: fixed;            top: 0; left: 0; right: 0; bottom: 0;            background: rgba(0,0,0,0.35);            z-index: 0;        }        .card, .lista {            position: relative;            z-index: 1;        }        .card {            background: white;            padding: 25px;            border-radius: 12px;            box-shadow: 0 4px 10px rgba(0,0,0,0.1);            width: 100%;
             max-width: 400px;
             text-align: center;
